@@ -56,6 +56,9 @@ class ChatClient:
         await self._close()
 
     async def _listen_server(self) -> None:
+        if self.reader is None:
+            logger.debug("Reader is not initialized")
+            return
         try:
             while True:
                 line = await self.reader.readline()
@@ -65,7 +68,7 @@ class ChatClient:
                 try:
                     msg = json.loads(line.decode())
                 except Exception:
-                    logger.warning(f"Received invalid JSON: {line}")
+                    logger.warning(f"Received invalid JSON: {line.decode(errors='replace')}")
                     continue
                 self._handle_server_message(msg)
         except asyncio.CancelledError:
@@ -104,6 +107,9 @@ class ChatClient:
             raise
 
     async def _send(self, obj: dict) -> None:
+        if self.writer is None:
+            logger.debug("Writer is not initialized")
+            return
         try:
             data = json.dumps(obj, ensure_ascii=False) + "\n"
             self.writer.write(data.encode())

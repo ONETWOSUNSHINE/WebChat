@@ -133,6 +133,9 @@ class ChatServer:
 
     async def register(self, client: ClientHandler) -> None:
         prev: Optional[ClientHandler] = None
+        if client.login is None:
+            logger.debug("Attempt to register client without login")
+            return
         async with self._lock:
             if client.login in self._clients:
                 logger.info(f"Deleting previous connection for {client.login}")
@@ -158,7 +161,7 @@ class ChatServer:
     async def broadcast(self, obj: dict, exclude: Optional[ClientHandler]) -> None:
         to_send: list[ClientHandler] = []
         async with self._lock:
-            for login, client in list(self._clients.items()):
+            for _, client in list(self._clients.items()):
                 if exclude is not None and client is exclude:
                     continue
                 to_send.append(client) 

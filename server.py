@@ -167,11 +167,12 @@ class ChatServer:
             await asyncio.gather(*coros, return_exceptions=True)
 
 def get_port_from_env() -> int:
-    s = os.environ.get("PORT") or os.environ.get("CHAT_PORT")
+    port_str: str = os.environ.get("CHAT_PORT", os.environ.get("PORT", "8888"))
     try:
-        return int(s) if s else 8888
+        port: int = int(port_str)
     except Exception:
-        return 8888
+        port = 8888
+    return port
     
 async def main() -> None:
     port = get_port_from_env()

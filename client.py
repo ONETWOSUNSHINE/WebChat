@@ -4,7 +4,7 @@ import logging
 import os
 import sys
 from functools import partial
-from typing import Optional, Tuple, Any
+from typing import Optional, Tuple
 
 logging.basicConfig(
     stream=sys.stderr,
